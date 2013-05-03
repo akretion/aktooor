@@ -1,0 +1,28 @@
+<xsl:stylesheet 
+      version="1.0"
+      xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+<!--
+<xsl:template match="//div">
+  <xsl:copy-of select="*"/>
+</xsl:template>
+-->
+
+<!-- TODO buttons -->
+
+<xsl:template match="//div">
+    <div class="control-group">
+      <xsl:apply-templates select="field" />
+      <xsl:apply-templates select="div" />
+    </div>
+</xsl:template>
+
+<xsl:template match="//field">
+  <div class="field">
+    <xsl:text disable-output-escaping="yes">&lt;%= oe_form_field(f, {name:'</xsl:text>
+    <xsl:value-of select="@name"/>', string:'<xsl:value-of select="@string"/>', widget:'<xsl:value-of select="@widget"/>', class:'<xsl:value-of select="@class"/>', options: "<xsl:value-of select="@options"/>", modifiers: "<xsl:value-of select="@modifiers"/>", on_change: "<xsl:value-of select="@on_change"/>", placeholder: "<xsl:value-of select="@placeholder"/>", domain:"<xsl:value-of select="@domain"/>", context:"<xsl:value-of select="@context"/>", style:'<xsl:value-of select="@style"/>', attrs: "<xsl:value-of select="@attrs"/>", invisible: "<xsl:value-of select="@invisible"/>", readonly: "<xsl:value-of select="@readonly"/>", nolabel: "<xsl:value-of select="@nolabel"/>"
+    <xsl:text disable-output-escaping="yes">}) %></xsl:text>
+  </div>
+</xsl:template>
+
+</xsl:stylesheet>

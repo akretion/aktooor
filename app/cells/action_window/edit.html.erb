@@ -1,0 +1,22 @@
+<h1>Editing <% raise @object.inspect.to_s %></h1>
+
+  <%= form_for(@object) do |f| %>
+  <% if @object.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@object.errors.count, "error") %> prohibited this res_partner from being saved:</h2>
+
+      <ul>
+      <% @object.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <%= render :inline => @oe_partial, :locals => {f: f} %>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+  <% end %>
+
+<%= link_to 'Show', @object %> |
+<%= link_to 'Back', "res_partners_path" %>
