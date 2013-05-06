@@ -13,8 +13,4 @@ class ActionWindowCell < Cell::Rails
     render
   end
 
-  def forward(args)
-p "*******", args, @object
-#    render 
-  end
 end

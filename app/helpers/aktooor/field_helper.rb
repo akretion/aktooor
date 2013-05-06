@@ -20,16 +20,17 @@
     block = ""
 
     if @fields[name]
-      if attrs[:invisible]
-        block = form.hidden_field(name, options)
-      elsif attrs[:readonly]
-        options['disabled'] = 'disabled'
-      end
-
       if attrs[:nolabel]
         label = false
       else
         label = true
+      end
+
+      if attrs[:invisible]
+        block = form.hidden_field(name, options)
+        label = false
+      elsif attrs[:readonly]
+        options['disabled'] = 'disabled'
       end
 
       case @fields[name]['type']
@@ -59,17 +60,17 @@
         rel = @abstract_model.const_get(@fields[name]['relation'])
         op_ids = rel.search #TODO limit!
         opts = rel.read(op_ids, ['id', 'name']).map {|i| [i["name"], i["id"]]}
-        block = form.select(name, options_for_select(opts), {}, options)
+        block = form.select(name, options_for_select(opts), options.merge(:include_blank => true))
       when 'many2many'
         rel = @abstract_model.const_get(@fields[name]['relation'])
         op_ids = rel.search #TODO limit!
         opts = rel.read(op_ids, ['id', 'name']).map {|i| [i["name"], i["id"]]}
-        block = form.select(name, options_for_select(opts), {}, options.merge({:multiple => true, :class => "chzn-select", :style => "width:450px;" }))
+        block = form.select(name, options_for_select(opts), options.merge({:multiple => true, :class => "chzn-select", :style => "width:450px;", :include_blank => true }))
       else
 #        block = "TODO", name, @fields["type"] #TODO
       end
 
-      block = "#{form.label(name, name, class: 'control-label span2')}#{block}" if label
+      block = "#{form.label(name, @fields[name]['string'] || name, class: 'control-label span2')}#{block}" if label
       return block.html_safe
     end
   end
