@@ -1,8 +1,7 @@
-<h1>
-  ActionWindow#show
-</h1>
+<div class='openerp openerp_webclient_container'><div class='oe_form span12'>
 
-<p>
-  Find me in app/cells/action_window/show.html.erb
-  <%= @object.inspect %>
-</p>
+<h1>Showing <%= @abstract_model.model_name %></h1>
+
+<%= render(partial: 'action_window/form', locals: {oe_partial: @oe_partial, object: @object, model_path: @model_path}) %>
+
+</div></div>

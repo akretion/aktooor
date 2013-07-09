@@ -3,8 +3,8 @@
 
     def table_header
       block = ""
-      @fields.keys.each do |k|
-        block << "<th>#{@fields[k]["string"]}</th>"
+      @field_list.each do |k|
+        block << "<th>#{k}</th>"
       end
       block.html_safe
     end

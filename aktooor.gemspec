@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "actionpack", ">= 3.1"
+  s.add_dependency "simple_form"
   s.add_dependency "ooorest"
   s.add_dependency "nokogiri"
 end
