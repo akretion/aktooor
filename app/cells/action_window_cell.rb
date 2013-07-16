@@ -1,7 +1,6 @@
 class ActionWindowCell < Cell::Rails
 
   include Ooorest::ActionWindowController
-  include Ooorest::RequestHelper #FIXME not very clean as already included in ActionWindowController
   include Aktooor::ViewAwareController
 
   helper NavigationHelper
