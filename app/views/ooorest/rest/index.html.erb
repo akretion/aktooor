@@ -1,0 +1,26 @@
+<h1>Listing <%= @abstract_model.model_name %></h1>
+
+<%= paginate @objects %>
+
+<table class="table table-striped table-bordered table-condensed">
+  <tr>
+    <%= table_header %>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @objects.each do |obj| %>
+  <tr>
+    <%= render :inline => @oe_partial, :locals => {obj: obj} %>
+    <td><%= link_to 'Show', ooorest.show_path(@model_path, obj.id) %></td>
+    <td><%= link_to 'Edit', ooorest.edit_path(@model_path, obj.id) %></td>
+    <td><%= link_to 'Destroy', ooorest.show_path(@model_path, obj.id), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+
+<br />
+
+<%= link_to "New #{@abstract_model.model_name}", ooorest.new_path(@model_path) %>
