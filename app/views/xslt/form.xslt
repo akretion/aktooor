@@ -27,7 +27,13 @@
 </xsl:template>
 
 <xsl:template match="page" mode="content">
-    <div class="tab-pane fade active in">
+    <div class="tab-pane fade">
+      <xsl:attribute name="class">
+        <xsl:choose>
+          <xsl:when test="count(preceding-sibling::*) &lt; 1">tab-pane fade active in</xsl:when>
+          <xsl:otherwise>tab-pane fade</xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
       <xsl:attribute name="id"><xsl:value-of select="translate(translate(@string, ' ', ''), '&amp;', '')" /></xsl:attribute>
       <xsl:apply-templates select="*" />
       <br></br>
