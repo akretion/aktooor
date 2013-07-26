@@ -88,7 +88,7 @@ p "************", attrs, @fields
     #  return form.input name, opts
       reflection = @abstract_model.reflect_on_association(name)
     #  opts[:collection] = reflection.klass.all(reflection.options.slice(:conditions, :order).merge(context: @context))
-      opts[:collection] = reflection.klass.find(:all, fields: ['name'], limit: 5, context: @context) #TODO domain + no limit
+      opts[:collection] = reflection.klass.find(:all, fields: ['name'], limit: 5, context: @ooor_context) #TODO domain + no limit
       opts[:wrapper_html] = {class: "field"}
       opts[:label_html] = {class: "span3"}
       return form.association name, opts
@@ -136,16 +136,16 @@ p "************", attrs, @fields
         block = form.select(name, options_for_select(@fields[name]["selection"].map{|i|[i[1], i[0]]}), options)
       when 'many2one'
         rel = @abstract_model.const_get(@fields[name]['relation'])
-        op_ids = rel.search([], 0, 8, false, @context) #TODO limit!
-        opts = rel.read(op_ids, ['id', 'name'], @context).map {|i| [i["name"], i["id"]]}
+        op_ids = rel.search([], 0, 8, false, @ooor_context) #TODO limit!
+        opts = rel.read(op_ids, ['id', 'name'], @ooor_context).map {|i| [i["name"], i["id"]]}
         if @object.associations[name]
           options.merge(:selected => @object.associations[name][0])
         end
         block = form.select(name, options_for_select(opts), options.merge(:include_blank => true))
       when 'many2many'
         rel = @abstract_model.const_get(@fields[name]['relation'])
-        op_ids = rel.search([], 0, 8, false, @context) #TODO limit!
-        opts = rel.read(op_ids, ['id', 'name'], @context).map {|i| [i["name"], i["id"]]}
+        op_ids = rel.search([], 0, 8, false, @ooor_context) #TODO limit!
+        opts = rel.read(op_ids, ['id', 'name'], @ooor_context).map {|i| [i["name"], i["id"]]}
         block = form.select(name, options_for_select(opts), options.merge({:multiple => true, :class => "chzn-select", :style => "width:450px;", :include_blank => true }))
       else
 #        block = "TODO", name, @fields["type"] #TODO

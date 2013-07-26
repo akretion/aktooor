@@ -23,8 +23,8 @@
 
     def topmenu_items
       return unless @abstract_model
-      ids = menu_obj.search(['parent_id', '=', false], 0, 1000, false, @context)
-      items = menu_obj.find(ids, context: @context)
+      ids = menu_obj.search(['parent_id', '=', false], 0, 1000, false, ooor_context)
+      items = menu_obj.find(ids, context: ooor_context)
       items.map do |m|
       "<li>#{link_to m.name, "/aktooor/#{first_model(m)}?menu_id=#{m.id}"  }</li>"
       end.join().html_safe
@@ -32,7 +32,7 @@
 
     def sidebar_items(selected=nil)
       return unless @abstract_model
-      selected ||= menu_obj.find(top_menu_id, context: @context)
+      selected ||= menu_obj.find(top_menu_id, context: ooor_context)
       block = ""
       selected.child_id.each do |submenu|
         if submenu.associations["action"] && submenu.action.res_model
