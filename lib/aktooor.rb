@@ -11,7 +11,7 @@ module Aktooor
     end
 
     def get_view_meta
-      get_model
+      ooor_model
       @view_type = params["view_type"] || {index: :tree, show: :form, edit: :form, new: :form}[params["action"].to_sym] || :tree
       if params['view_id']
         @view_id = params["view_id"]
