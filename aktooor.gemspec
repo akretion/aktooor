@@ -13,11 +13,13 @@ Gem::Specification.new do |s|
   s.summary     = "TODO: Summary of Aktooor."
   s.description = "TODO: Description of Aktooor."
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "actionpack", ">= 3.1"
   s.add_dependency "simple_form"
   s.add_dependency "ooorest"
   s.add_dependency "nokogiri"
+
+  s.add_development_dependency "tzinfo" # FIXME: why the hell do we need this for 3.1?
 end

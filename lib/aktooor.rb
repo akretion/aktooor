@@ -18,7 +18,7 @@ module Aktooor
   module ViewAwareController
     def ooor_model_meta
       super
-      ooor_view_meta unless (['json', 'xml'].index(params[:format]) &&! params[:view_id])
+      ooor_view_meta unless ([:json, :xml].index(params[:format]) || params[:view_id])
     end
 
     def ooor_view_meta

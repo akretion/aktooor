@@ -4,6 +4,9 @@ source "http://rubygems.org"
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.
 gemspec
+gem 'ooor', git: 'https://github.com/akretion/ooor.git'
+gem 'ooorest', git: 'https://github.com/akretion/ooorest.git'
+gem 'actionpack', "~> 3.2"
 
 # jquery-rails is used by the dummy application
 gem "jquery-rails"

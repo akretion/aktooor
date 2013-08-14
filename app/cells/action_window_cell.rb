@@ -7,7 +7,7 @@ class ActionWindowCell < Cell::Rails
   helper ViewTreeHelper
   helper FieldHelper
 
-  respond_to :html, :json, :xml # do we really want json and xml here?
+#  respond_to :html, :json, :xml # do we really want json and xml here?
 
   before_filter :ooor_model_meta, :except => [:dashboard]
   before_filter :ooor_object, :only => [:show, :edit, :delete, :update, :show_in_app]
