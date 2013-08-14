@@ -1,9 +1,20 @@
-require "aktooor/engine"
-require "ooorest"
-require "ooorest/action_window_controller_base"
-require "nokogiri"
+require 'action_view'
+require 'aktooor/engine'
+require 'ooorest'
+require 'ooorest/action_window_controller_base'
+require 'nokogiri'
+require 'aktooor/action_view_extensions/form_helper'
+require 'aktooor/form_builder'
+require 'simple_form'
 
 module Aktooor
+  extend ActiveSupport::Autoload
+
+  eager_autoload do
+    autoload :FormBuilder
+#    autoload :Inputs
+  end
+
   module ViewAwareController
     def ooor_model_meta
       super

@@ -72,16 +72,16 @@
 </xsl:template>
 
 <xsl:template match="label">
-    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>oe_form_label(f,{for:"<xsl:value-of select="@name"/>", string:"<xsl:value-of select="@string"/>"})<xsl:text disable-output-escaping="yes">%></xsl:text>
+    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>f.oe_form_label(for:"<xsl:value-of select="@name"/>", string:"<xsl:value-of select="@string"/>")<xsl:text disable-output-escaping="yes">%></xsl:text>
 </xsl:template>
 
 <xsl:template match="field">
-    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>oe_form_field(f, {name:"<xsl:value-of select="@name"/>", string:"<xsl:value-of select="@string"/>", widget:'<xsl:value-of select="@widget"/>', class:'<xsl:value-of select="@class"/>', options: "<xsl:value-of select="@options"/>", modifiers: "<xsl:value-of select="@modifiers"/>", on_change: "<xsl:value-of select="@on_change"/>", placeholder: "<xsl:value-of select="@placeholder"/>", domain:"<xsl:value-of select="@domain"/>", context:"<xsl:value-of select="@context"/>", style:"<xsl:value-of select="@style"/>", attrs: "<xsl:value-of select="@attrs"/>", invisible: "<xsl:value-of select="@invisible"/>", readonly: "<xsl:value-of select="@readonly"/>", nolabel: "<xsl:value-of select="@nolabel"/>" })<xsl:text disable-output-escaping="yes">%></xsl:text>
+    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>f.oe_form_field(name:"<xsl:value-of select="@name"/>", string:"<xsl:value-of select="@string"/>", widget:'<xsl:value-of select="@widget"/>', class:'<xsl:value-of select="@class"/>', options: "<xsl:value-of select="@options"/>", modifiers: "<xsl:value-of select="@modifiers"/>", on_change: "<xsl:value-of select="@on_change"/>", placeholder: "<xsl:value-of select="@placeholder"/>", domain:"<xsl:value-of select="@domain"/>", context:"<xsl:value-of select="@context"/>", style:"<xsl:value-of select="@style"/>", attrs: "<xsl:value-of select="@attrs"/>", invisible: "<xsl:value-of select="@invisible"/>", readonly: "<xsl:value-of select="@readonly"/>", nolabel: "<xsl:value-of select="@nolabel"/>")<xsl:text disable-output-escaping="yes">%></xsl:text>
   <xsl:apply-templates select="*" />
 </xsl:template>
 
 <xsl:template match="button">
-    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>oe_form_button(f, {type:"<xsl:value-of select="@type"/>", string:"<xsl:value-of select="@string"/>", name:"<xsl:value-of select="@name"/>", context:"<xsl:value-of select="@context"/>", attrs: "<xsl:value-of select="@attrs"/>", modifiers: "<xsl:value-of select="@modifiers"/>", style:"<xsl:value-of select="@style"/>"})<xsl:text disable-output-escaping="yes">%></xsl:text>
+    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>f.oe_form_button(type:"<xsl:value-of select="@type"/>", string:"<xsl:value-of select="@string"/>", name:"<xsl:value-of select="@name"/>", context:"<xsl:value-of select="@context"/>", attrs: "<xsl:value-of select="@attrs"/>", modifiers: "<xsl:value-of select="@modifiers"/>", style:"<xsl:value-of select="@style"/>")<xsl:text disable-output-escaping="yes">%></xsl:text>
 </xsl:template>
 
 </xsl:stylesheet>
