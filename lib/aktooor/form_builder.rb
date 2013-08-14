@@ -21,9 +21,8 @@ module Aktooor
 
     def oe_image_field(name, attrs) #TODO
       block = <<-eos
-<span class="oe_form_field oe_form_field_image oe_left oe_avatar">
-<img border="1" name="image" src="http://localhost:8069/web/binary/image?model=res.partner&amp;id=6&amp;field=image_medium&amp;t=1367894577446&amp;session_id=4cc76635f8ab42f7957041d38956836e" style="max-width: 90px; max-height: 90px; margin-left: 0px; margin-top: 0px;"/>
-</span>
+<img src='data:image/png;base64,#{@object.send(name)}'/>
+#{file_field :file}
       eos
       block.html_safe
     end
