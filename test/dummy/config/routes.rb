@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
 
-  mount Aktooor::Engine => "/aktooor"
+  mount Ooorest::Engine => "/ooorest"
 end
