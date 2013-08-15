@@ -81,7 +81,7 @@
 </xsl:template>
 
 <xsl:template match="button">
-    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>f.oe_form_button(type:"<xsl:value-of select="@type"/>", string:"<xsl:value-of select="@string"/>", name:"<xsl:value-of select="@name"/>", context:"<xsl:value-of select="@context"/>", attrs: "<xsl:value-of select="@attrs"/>", modifiers: "<xsl:value-of select="@modifiers"/>", style:"<xsl:value-of select="@style"/>")<xsl:text disable-output-escaping="yes">%></xsl:text>
+    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>f.ooor_button("<xsl:value-of select="@string"/>", type:"<xsl:value-of select="@type"/>", name:"<xsl:value-of select="@name"/>", context:"<xsl:value-of select="@context"/>", attrs: "<xsl:value-of select="@attrs"/>", modifiers: "<xsl:value-of select="@modifiers"/>", style:"<xsl:value-of select="@style"/>")<xsl:text disable-output-escaping="yes">%></xsl:text>
 </xsl:template>
 
 </xsl:stylesheet>
