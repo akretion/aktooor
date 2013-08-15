@@ -8,7 +8,13 @@
 </head>
 <body>
 
-<%= yield %>
+<div id="main-container" class="container">
+  <%= yield %>
+</div>
+
+<script type="text/javascript">
+  <%= yield :js %>
+</script>
 
 </body>
 </html>
