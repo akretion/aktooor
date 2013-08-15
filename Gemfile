@@ -20,3 +20,8 @@ gem "nokogiri"
 
 # To use debugger
 # gem 'debugger'
+
+group :development do
+  gem 'sass-rails', '~> 3.2'
+  gem 'bootstrap-sass', '~> 2.3.2.1'
+end

@@ -76,7 +76,7 @@
 </xsl:template>
 
 <xsl:template match="field">
-    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>f.oe_form_field(name:"<xsl:value-of select="@name"/>", string:"<xsl:value-of select="@string"/>", widget:'<xsl:value-of select="@widget"/>', class:'<xsl:value-of select="@class"/>', options: "<xsl:value-of select="@options"/>", modifiers: "<xsl:value-of select="@modifiers"/>", on_change: "<xsl:value-of select="@on_change"/>", placeholder: "<xsl:value-of select="@placeholder"/>", domain:"<xsl:value-of select="@domain"/>", context:"<xsl:value-of select="@context"/>", style:"<xsl:value-of select="@style"/>", attrs: "<xsl:value-of select="@attrs"/>", invisible: "<xsl:value-of select="@invisible"/>", readonly: "<xsl:value-of select="@readonly"/>", nolabel: "<xsl:value-of select="@nolabel"/>")<xsl:text disable-output-escaping="yes">%></xsl:text>
+    <xsl:text disable-output-escaping="yes">&lt;%= </xsl:text>f.ooor_input(:<xsl:value-of select="@name"/>, label:"<xsl:value-of select="@string"/>", widget:'<xsl:value-of select="@widget"/>', class:'<xsl:value-of select="@class"/>', options: "<xsl:value-of select="@options"/>", modifiers: "<xsl:value-of select="@modifiers"/>", on_change: "<xsl:value-of select="@on_change"/>", placeholder: "<xsl:value-of select="@placeholder"/>", domain:"<xsl:value-of select="@domain"/>", context:"<xsl:value-of select="@context"/>", style:"<xsl:value-of select="@style"/>", attrs: "<xsl:value-of select="@attrs"/>", invisible: "<xsl:value-of select="@invisible"/>", readonly: "<xsl:value-of select="@readonly"/>", nolabel: "<xsl:value-of select="@nolabel"/>")<xsl:text disable-output-escaping="yes">%></xsl:text>
   <xsl:apply-templates select="*" />
 </xsl:template>
 

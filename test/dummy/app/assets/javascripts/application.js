@@ -12,4 +12,10 @@
 //
 //= require jquery
 //= require jquery_ujs
+
+//= require bootstrap
+//= require bootstrap-tab
+//= require cocoon
+//= require select2
+
 //= require_tree .

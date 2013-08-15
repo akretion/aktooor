@@ -4,16 +4,46 @@ require 'simple_form/form_builder'
 module Aktooor
   class FormBuilder < SimpleForm::FormBuilder
 
+    def ooor_input(attribute_name, options={}, &block)
+      attribute_name = attribute_name.to_s
+      options.each {|k, v| options[k] = (v.blank? ? nil : v)}
+      options[:name] = attribute_name
+      options[:oe_type] = options[:widget] || fields[attribute_name]['type']
+      options[:as] = Ooor::Base.to_rails_type(options[:oe_type])
+      options[:hint] ||= fields[attribute_name]['help']
+      options[:required] ||= fields[attribute_name]['required']
+      options[:style] ||= {}
+      options.delete(:width)
+      options.delete('width')
+      options.delete(:style).delete('width')
+      adapt_label(attribute_name, options)
+      oe_form_field(attribute_name, options)
+    end
+
+    def adapt_label(attribute_name, options)
+      if options[:nolabel]
+        if @labels[attribute_name] #TODO study if we can do closer to OE
+          options[:label] ||= fields[attribute_name]['string']
+          options[:label_html] = {class: "span3"}
+        else
+          options[:label] = false
+        end
+      else
+        options[:label] ||= fields[attribute_name]['string']
+        options[:label_html] = {class: "span3"}#unless opts[:as] == :text
+      end
+    end
+
     def oe_form_label(attrs)
       @labels ||= {}
-      @labels[attrs[:for]] = attrs[:string]
+      @labels[attrs[:for]] = attrs[:label]
       return ""
     end
 
     def oe_form_button(attrs)
       block = <<-eos
       <button class="oe_button oe_form_button" type="#{attrs[:type]}" style="#{attrs[:style]}"}">
-        <span>#{attrs[:string]}</span>
+        <span>#{attrs[:label]}</span>
       </button>
       eos
       block.html_safe
@@ -27,14 +57,7 @@ module Aktooor
       block.html_safe
     end
 
-  def oe_form_field(attrs) #TODO other OE attrs!
-    attrs.each {|k, v| attrs[k] = (v == "" ? nil : v)}
-    name = attrs.delete(:name)
-
-    options = {}.merge({style: attrs[:style] || {}}).merge({class: attrs[:class], placeholder: attrs[:placeholder]})
-    options.delete(:width)
-    options.delete('width')
-    options.delete(:style).delete('width')
+  def oe_form_field(name, attrs) #TODO other OE attrs!
 
     if attrs[:widget] == 'image'
       return oe_image_field(name, attrs)
@@ -51,23 +74,6 @@ module Aktooor
       if opts[:as] == :text
         opts[:wrapper_html] = {class: "field span6"}
       end
-
-      if attrs[:nolabel]
-        if @labels[name] #TODO study if we can do closer to OE
-          opts[:label] = attrs[:string] || fields[name]['string']
-          opts[:label_html] = {class: "span3"}
-        else
-          opts[:label] = false
-        end
-      else
-        opts[:label] = attrs[:string] || fields[name]['string']
-        opts[:label_html] = {class: "span3"}#unless opts[:as] == :text
-      end
-
-      opts[:placeholder] = attrs[:placeholder]
-  #    opts[:hint] =  @abstract_model.columns_hash[name]['help'] || attrs[:help] #works but hugly -> do it with mouseover
-      opts[:required] = @object.class.columns_hash[name]['required'] || attrs[:required]
-      return input name, opts #as: @abstract_model.columns_hash[name][:type] if @abstract_model.columns_hash[name]
     end
 
 
@@ -77,7 +83,7 @@ module Aktooor
       rel_name = "#{name}_id"
       rel_id = @object.send(rel_name.to_sym)
       rel_path = fields[name]['relation'].gsub('.', '-')
-      ajax_path = "/aktooor/#{rel_path}.json"
+      ajax_path = "/ooorest/#{rel_path}.json"
       if rel_id
         rel_value = @object.send(name.to_sym).name
       else
@@ -174,8 +180,6 @@ end
         block = datetime_select(name, options)
       when 'time'
         block = select_time(name, options)
-#      when 'binary'
-#        "<img src='data:image/jpeg;base64,<%=  @base_64_encoded_data %>'>"
       when 'selection'
         block = select(name, @template.options_for_select(fields[name]["selection"].map{|i|[i[1], i[0]]}), options)
       when 'many2one'
@@ -203,7 +207,7 @@ end
     private
 
       def fields
-        @template.instance_variable_get('@fields')
+        @template.instance_variable_get('@fields') || @object.class.all_fields
       end
 
       def ooor_context
