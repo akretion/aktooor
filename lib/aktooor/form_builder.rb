@@ -45,7 +45,6 @@ module Aktooor
 
     def ooor_button(label, options)
       @template.button_to(label || name, options)
-#      <button class="oe_button oe_form_button" type="#{attrs[:type]}" style="#{attrs[:style]}"}">
     end
 
     def ooor_image_field(name, options)
@@ -62,12 +61,12 @@ module Aktooor
       else
         rel_value = ''
       end
-      block = "<input type='hidden' id='#{name}' name='#{@object.class.name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/>"
+      block = "<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/>"
 
 @template.content_for :js do
 "
 $(document).ready(function() {
-  $('##{name}').select2({
+  $('##{@object_name}_#{name}').select2({
     placeholder: '#{fields[name]['string']}',
     width: 300,
     minimumInputLength: 2,
@@ -108,21 +107,20 @@ end
 
     def ooor_many2many_field(name, options)
       rel_name = "#{name}_ids"
-      rel_ids = @object.send(rel_name.to_sym)
+      rel_ids = @object.send(rel_name.to_sym).join(',')
       rel_path = fields[name]['relation'].gsub('.', '-')
       ajax_path = "/ooorest/#{rel_path}.json" #TODO use URL generator
-p "*************", name, rel_ids
       if rel_ids
         rel_value = @object.send(name.to_sym).map {|i| i.name}.join(',')
       else
         rel_value = ''
       end
-      block = "<input type='hidden' id='#{name}' name='#{@object.class.name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/>"
+      block = "<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/>"
 
 @template.content_for :js do
 "
 $(document).ready(function() {
-  $('##{name}').select2({
+  $('##{@object_name}_#{name}').select2({
     placeholder: '#{fields[name]['string']}',
     width: 300,
     minimumInputLength: 2,
@@ -145,7 +143,7 @@ $(document).ready(function() {
       return item.name;
     },
     ajax: {
-      url: #{ajax_path},
+      url: '#{ajax_path}',
       data: function (name, page) {
         return {
           q: name, // search term
