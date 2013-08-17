@@ -7,10 +7,7 @@ module Aktooor
     def ooor_input(attribute_name, attrs={}, &block)
       attribute_name = attribute_name.to_s
       options = {}
-      attrs.each do |k, v|
-        options[k] = v if v && !v.blank?
-      end
-      options[:name] = attribute_name
+      attrs.each { |k, v| options[k] = v if v && !v.blank? }
       options[:oe_type] = options[:widget] || fields[attribute_name]['type']
       options[:as] = Ooor::Base.to_rails_type(options[:oe_type])
       options[:hint] ||= fields[attribute_name]['help']
@@ -19,6 +16,18 @@ module Aktooor
       options.delete(:width)
       options.delete('width')
       options.delete(:style).delete('width')
+
+      options[:class] = "#{options[:class]} span3" unless (options[:as] == :boolean || options[:as] == :text)
+      options[:input_html] = {class: options[:class]}
+      options[:disabled] = true if options.delete(:readonly) || fields[attribute_name]['readonly']
+      options[:as] = 'hidden' if options[:invisible]
+
+      if options[:as] == :text
+        options[:wrapper_html] = {class: "field span6"}
+      else
+        options[:wrapper_html] = {class: "field"}
+      end
+
       adapt_label(attribute_name, options)
       dispatch_input(attribute_name, options)
     end
@@ -44,7 +53,7 @@ module Aktooor
     end
 
     def ooor_button(label, options)
-      @template.button_to(label || name, options)
+      @template.link_to(label || name, options)
     end
 
     def ooor_image_field(name, options)
@@ -61,14 +70,14 @@ module Aktooor
       else
         rel_value = ''
       end
-      block = "<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/>"
+      block = "<div class='input string field'/>#{label(name, options.delete('string') || fields[name]['string'], {class: 'string required span3'})}<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div>"
 
 @template.content_for :js do
 "
 $(document).ready(function() {
   $('##{@object_name}_#{name}').select2({
     placeholder: '#{fields[name]['string']}',
-    width: 300,
+    width: 'element',
     minimumInputLength: 2,
     formatSelection: function(category) {
       return category.name;
@@ -115,14 +124,14 @@ end
       else
         rel_value = ''
       end
-      block = "<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/>"
+      block = "<div class='input string field'/>#{label(name, options.delete('string') || fields[name]['string'], {class: 'string required span3'})}<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/>"
 
 @template.content_for :js do
 "
 $(document).ready(function() {
   $('##{@object_name}_#{name}').select2({
     placeholder: '#{fields[name]['string']}',
-    width: 300,
+    width: 'element',
     minimumInputLength: 2,
     multiple:true,
     maximumSelectionSize: 15,
@@ -169,31 +178,11 @@ end
     def dispatch_input(name, options={}) #TODO other OE attrs!
       attrs = options #TODO remove
 
-      if @object.class.columns_hash[name] && ![:selection, :html].index(@object.class.columns_hash[name][:type]) && !attrs[:invisible]
-        opts = {}
-        opts[:as] = @object.class.columns_hash[name][:type]
-        options[:class] = "#{options[:class]} span3" unless (opts[:as] == :boolean || opts[:as] == :text)
-        opts[:input_html] = options #TODO more stuff
-        opts[:disabled] = true if attrs[:readonly] || @object.class.columns_hash[name]['readonly']
-        opts[:wrapper_html] = {class: "field"}
-
-        if opts[:as] == :text
-          opts[:wrapper_html] = {class: "field span6"}
-        end
-      end
-
-      if attrs[:nolabel]
-        label = false
-      else
-        label = true
-      end
-
-      if attrs[:invisible]
-        block = hidden_field(name, options)
-        label = false
-      elsif attrs[:readonly]
-        options['disabled'] = 'disabled'
-      end
+#      if attrs[:nolabel]
+#        label = false
+#      else
+#        label = true
+#      end
 
       case options[:oe_type]
       when 'image'
@@ -206,37 +195,22 @@ end
         ooor_many2many_field(name, options)
       when 'mail_followers'
         ooor_many2many_field(name, options)
-      when 'password'
-        password_field(name, options)
-      when 'char'
-        text_field(name, options)
-      when 'text'
-        text_area(name, options)
       when 'html'
         text_area(name, options)
-      when 'boolean'
-        check_box(name, options)
-      when 'integer', 'float'
-        number_field(name, options)
-      when 'date'
-        date_select(name, options)
-      when 'datetime'
-        datetime_select(name, options)
-      when 'time'
-        select_time(name, options)
       when 'selection'
         select(name, @template.options_for_select(fields[name]["selection"].map{|i|[i[1], i[0]]}), options)
       when 'statusbar'
         select(name, @template.options_for_select(fields[name]["selection"].map{|i|[i[1], i[0]]}), options)
       #simple_form from now on:
-      when 'email'
-        email_field(name, options)
-      when 'url'
-        url_field(name, options) 
+      when 'one2many'
+         "TODO one2many #{name}"
+#        collection(name, options)
+      when 'mail_thread'
+        "TODO mail_thread #{name}"
       else
-        "TODO #{name} #{options.inspect}"
+        input(name, options)
       end
-  end
+    end
 
     private
 
