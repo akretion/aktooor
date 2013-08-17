@@ -21,7 +21,7 @@ module Aktooor
       options[:input_html] = {class: options[:class]}
       options[:disabled] = true if options.delete(:readonly) || fields[attribute_name]['readonly']
       options[:as] = 'hidden' if options[:invisible]
-
+      #TODO deal with no-label
       if options[:as] == :text
         options[:wrapper_html] = {class: "field span6"}
       else
@@ -176,14 +176,6 @@ end
     end
 
     def dispatch_input(name, options={}) #TODO other OE attrs!
-      attrs = options #TODO remove
-
-#      if attrs[:nolabel]
-#        label = false
-#      else
-#        label = true
-#      end
-
       case options[:oe_type]
       when 'image'
         ooor_image_field(name, options)
