@@ -11,7 +11,7 @@ module Aktooor
       options[:oe_type] = options[:widget] || fields[attribute_name]['type']
       options[:as] = Ooor::Base.to_rails_type(options[:oe_type])
       options[:hint] ||= fields[attribute_name]['help']
-      options[:required] ||= fields[attribute_name]['required']
+      options[:required] ||= fields[attribute_name]['required'] || false
       options[:style] ||= {}
       options.delete(:width)
       options.delete('width')
@@ -66,6 +66,7 @@ module Aktooor
       rel_path = fields[name]['relation'].gsub('.', '-')
       ajax_path = "/ooorest/#{rel_path}.json"
       if rel_id
+        rel = @object.send(name.to_sym)
         rel_value = @object.send(name.to_sym).name #TODO optimize: -1 RPC call
       else
         rel_value = ''
@@ -107,6 +108,9 @@ $(document).ready(function() {
       }
     }
   });
+if (#{options[:disabled] == true}) {
+  $('##{@object_name}_#{name}').select2('readonly', true);
+}
 });
 ".html_safe
 end
@@ -116,11 +120,25 @@ end
 
     def ooor_many2many_field(name, options)
       rel_name = "#{name}_ids"
-      rel_ids = @object.send(rel_name.to_sym).join(',')
+      val = @object.send(rel_name.to_sym)
+      val = [] if !val || val == ""
+      if val.is_a?(String)
+        val = val.split(",").map! {|i| i.to_i} #FIXME remove?
+      end
+      
+      rel_ids = val.join(',')
       rel_path = fields[name]['relation'].gsub('.', '-')
       ajax_path = "/ooorest/#{rel_path}.json" #TODO use URL generator
       if rel_ids
-        rel_value = @object.send(name.to_sym).map {|i| i.name}.join(',')
+        objects = @object.send(name.to_sym)
+        if objects && !objects.is_a?(Array)
+          objects = [objects]
+        end
+        if objects
+          rel_value = objects.map {|i| i.name}.join(',')
+        else
+          rel_value = ''
+        end
       else
         rel_value = ''
       end
@@ -169,6 +187,9 @@ $(document).ready(function() {
     }
   });
 
+if (#{options[:disabled] == true}) {
+  $('##{@object_name}_#{name}').select2('readonly', true);
+}
 });
 ".html_safe
 end
