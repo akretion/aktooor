@@ -43,7 +43,9 @@ module Aktooor
     end
 
     def ooor_button(label, options)
-      @template.link_to(label || name, options)
+      @template.link_to(label, options) do
+        "<button type='button' class='btn btn-primary'>#{label}</button>".html_safe #todo Bootstrap icon?
+      end
     end
 
     def ooor_image_field(name, options)
