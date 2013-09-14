@@ -17,8 +17,6 @@ module Aktooor
       options.delete('width')
       options.delete(:style).delete('width')
 
-      options[:class] = "#{options[:class]} span3" unless (options[:as] == :boolean || options[:as] == :text)
-      options[:input_html] = {class: options[:class]}
       options[:disabled] = true if options.delete(:readonly) || fields[attribute_name]['readonly']
       options[:as] = 'hidden' if options[:invisible]
       #TODO deal with no-label
@@ -71,7 +69,7 @@ module Aktooor
       else
         rel_value = ''
       end
-      block = "<div class='input string field'/>#{label(name, options.delete('string') || fields[name]['string'], {class: 'string required span3'})}<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div>"
+      block = "<div class='input string field'/>#{label(name, options[:label] || options.delete('string') || fields[name]['string'], {class: 'string required span3'})}<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div>"
 
 @template.content_for :js do
 "
@@ -142,7 +140,7 @@ end
       else
         rel_value = ''
       end
-      block = "<div class='input string field'/>#{label(name, options.delete('string') || fields[name]['string'], {class: 'string required span3'})}<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/>"
+      block = "<div class='input string field'/>#{label(name, options[:label] || options.delete('string') || fields[name]['string'], {class: 'string required span3'})}<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/>"
 
 @template.content_for :js do
 "
