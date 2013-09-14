@@ -19,13 +19,6 @@ module Aktooor
 
       options[:disabled] = true if options.delete(:readonly) || fields[attribute_name]['readonly']
       options[:as] = 'hidden' if options[:invisible]
-      #TODO deal with no-label
-      if options[:as] == :text
-        options[:wrapper_html] = {class: "field span6"}
-      else
-        options[:wrapper_html] = {class: "field"}
-      end
-
       adapt_label(attribute_name, options)
       dispatch_input(attribute_name, options)
     end
@@ -40,7 +33,6 @@ module Aktooor
         end
       else
         options[:label] ||= fields[attribute_name]['string']
-        options[:label_html] = {class: "span3"}#unless opts[:as] == :text
       end
     end
 
@@ -69,7 +61,7 @@ module Aktooor
       else
         rel_value = ''
       end
-      block = "<div class='input string field'/>#{label(name, options[:label] || options.delete('string') || fields[name]['string'], {class: 'string required span3'})}<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div>"
+      block = "<div class='control-group input string field'/>#{label(name, options[:label] || options.delete('string') || fields[name]['string'], {class: 'string control-label'})}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>"
 
 @template.content_for :js do
 "
@@ -140,7 +132,7 @@ end
       else
         rel_value = ''
       end
-      block = "<div class='input string field'/>#{label(name, options[:label] || options.delete('string') || fields[name]['string'], {class: 'string required span3'})}<input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/>"
+      block = "<div class='control-group input string field'/>#{label(name, options[:label] || options.delete('string') || fields[name]['string'], {class: 'string control-label'})}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/></div></div>"
 
 @template.content_for :js do
 "
