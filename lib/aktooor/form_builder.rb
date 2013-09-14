@@ -61,7 +61,7 @@ module Aktooor
       else
         rel_value = ''
       end
-      block = "<div class='control-group input string field'/>#{label(name, options[:label] || options.delete('string') || fields[name]['string'], {class: 'string control-label'})}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>"
+      block = "<div class='control-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>"
 
 @template.content_for :js do
 "
@@ -132,7 +132,7 @@ end
       else
         rel_value = ''
       end
-      block = "<div class='control-group input string field'/>#{label(name, options[:label] || options.delete('string') || fields[name]['string'], {class: 'string control-label'})}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/></div></div>"
+      block = "<div class='control-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/></div></div>"
 
 @template.content_for :js do
 "
