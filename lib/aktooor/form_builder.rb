@@ -54,15 +54,27 @@ module Aktooor
 
     def ooor_many2one_field(name, options)
       rel_name = "#{name}_id"
-      rel_id = @object.send(rel_name.to_sym)
+      if @object.associations[name]
+        if @object.associations[name].is_a?(Array)
+          rel_id = @object.associations[name][0]
+          rel_value = @object.associations[name][1]
+        else
+          rel_id = @object.associations[name]
+          rel_klass = @object.class.const_get(@object.class.all_fields[name]['relation'])
+          rel_value = rel_klass.name_get([rel_id.to_i], ooor_context)[0][1]
+        end
+      else
+        rel_id = @object.associations[name] || @object.send(rel_name.to_sym)
+        if rel_id
+          rel_klass = @object.class.const_get(@object.class.all_fields[name]['relation'])
+          rel_value = rel_klass.name_get([rel_id.to_i], ooor_context)[0][1]
+        else
+          rel_value = ''
+        end
+      end
+
       rel_path = fields[name]['relation'].gsub('.', '-')
       ajax_path = "/ooorest/#{rel_path}.json"
-      if rel_id
-        rel = @object.send(name.to_sym)
-        rel_value = @object.send(name.to_sym).name #TODO optimize: -1 RPC call
-      else
-        rel_value = ''
-      end
       block = "<div class='control-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>"
 
 @template.content_for :js do
