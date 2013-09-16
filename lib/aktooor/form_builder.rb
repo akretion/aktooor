@@ -49,7 +49,19 @@ module Aktooor
     end
 
     def ooor_image_field(name, options)
-      "<img src='data:image/png;base64,#{@object.send(name)}'/>".html_safe
+      self.multipart = true
+"<div class='fileupload fileupload-new' data-provides='fileupload'>
+  <div class='fileupload-new thumbnail' style='width: 200px; height: 150px;'><img src='data:image/png;base64,#{@object.send(name)}' /></div>
+  <div class='fileupload-preview fileupload-exists thumbnail' style='max-width: 200px; max-height: 150px; line-height: 20px;'></div>
+  <div>
+    <span class='btn btn-file'>
+      <span class='fileupload-new'>Select image</span>
+      <span class='fileupload-exists'>Change</span>
+#{file_field(name, options)}
+    </span>
+    <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
+  </div>
+</div>".html_safe
     end
 
     def ooor_many2one_field(name, options)

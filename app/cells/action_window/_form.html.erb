@@ -1,4 +1,4 @@
-<%= ooor_form_for(object, url: (object.new? ? ooorest.create_path(model_path) : ooorest.update_path(model_path, object.id)), html: {:multipart => true, class: 'form-horizontal'}) do |f| %>
+<%= ooor_form_for(object, url: (object.new? ? ooorest.create_path(model_path) : ooorest.update_path(model_path, object.id)), html: {class: 'form-horizontal'}) do |f| %>
   <% if object.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(object.errors.count, "error") %> prohibited this res_partner from being saved:</h2>
