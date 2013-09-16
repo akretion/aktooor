@@ -50,18 +50,29 @@ module Aktooor
 
     def ooor_image_field(name, options)
       self.multipart = true
-"<div class='fileupload fileupload-new' data-provides='fileupload'>
-  <div class='fileupload-new thumbnail' style='width: 200px; height: 150px;'><img src='data:image/png;base64,#{@object.send(name)}' /></div>
+      if fields[name]['type'] == 'char' # it's just an image URL, image binary shouldn't be posted to OpenERP!
+        method = "ooor_special_file_#{name}"
+        url = @object.attributes[name] || @object.send(name) || "http://www.placehold.it/180x180/EFEFEF/AAAAAA&text=#{t(No+Logo)}"
+        image_placeholder = "<img src='#{@object.send(name)}' />"
+      else
+        method = name
+        image_placeholder = "<img src='data:image/png;base64,#{@object.send(name)}' />"
+      end
+"<div class='control-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'>
+<div class='fileupload fileupload-new' data-provides='fileupload'>
+  <div class='fileupload-new thumbnail' style='width: 200px; height: 150px;'>
+#{image_placeholder}
+  </div>
   <div class='fileupload-preview fileupload-exists thumbnail' style='max-width: 200px; max-height: 150px; line-height: 20px;'></div>
   <div>
     <span class='btn btn-file'>
       <span class='fileupload-new'>Select image</span>
       <span class='fileupload-exists'>Change</span>
-#{file_field(name, options)}
+#{file_field(method, options)}
     </span>
     <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
   </div>
-</div>".html_safe
+</div></div></div>".html_safe
     end
 
     def ooor_many2one_field(name, options)
