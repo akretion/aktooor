@@ -4,7 +4,7 @@
 
 <%= render(partial: 'action_window/form', locals: {oe_partial: @oe_partial, object: @object, model_path: @model_path}) %>
 
-<%= link_to 'Edit', ooorest.edit_path(@model_path) %> |
+<%= link_to 'Edit', ooorest.edit_path(@model_path, @object) %> |
 <%= link_to 'Back', ooorest.index_path(@model_path) %>
 
 </div></div>
