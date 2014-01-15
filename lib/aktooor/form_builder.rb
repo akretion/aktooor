@@ -52,8 +52,8 @@ module Aktooor
       self.multipart = true
       if fields[name]['type'] == 'char' # it's just an image URL, image binary shouldn't be posted to OpenERP!
         method = "ooor_special_file_#{name}"
-        url = @object.attributes[name] || @object.send(name) || "http://www.placehold.it/180x180/EFEFEF/AAAAAA&text=#{t(No+Logo)}"
-        image_placeholder = "<img src='#{@object.send(name)}' />"
+        url = @object.attributes[name] || @object.send(name) || "http://www.placehold.it/180x180/EFEFEF/AAAAAA&text=#{I18n.t('No+Image', :default => 'No+Image')}"
+        image_placeholder = "<img src='#{url}' />"
       else
         method = name
         image_placeholder = "<img src='data:image/png;base64,#{@object.send(name)}' />"
