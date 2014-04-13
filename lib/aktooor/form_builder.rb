@@ -27,7 +27,7 @@ module Aktooor
       if options[:nolabel]
         if @labels[attribute_name] #TODO study if we can do closer to OE
           options[:label] ||= fields[attribute_name]['string']
-          options[:label_html] = {class: "span3"}
+          options[:label_html] = {class: "col-md-3"}
         else
           options[:label] = false
         end

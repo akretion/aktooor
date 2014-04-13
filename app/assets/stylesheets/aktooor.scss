@@ -1,4 +1,4 @@
-.openerp div label.span2, .openerp div label.span3 {
+.openerp div label.col-md-2, .openerp div label.col-md-3 {
 #  float: left;
 #  margin-right: 30px;
   margin-left: 0px !important;
@@ -35,7 +35,7 @@
   clear: both;
 }
 
-.row-fluid .span6 {
+.row .col-md-6 {
   margin-left: 0px !important;
 }
 
