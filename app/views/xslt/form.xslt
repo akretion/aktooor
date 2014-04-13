@@ -41,13 +41,13 @@
 </xsl:template>
 
 <xsl:template match="group">
-  <div class="row span12">
+  <div class="row col-md-12">
       <xsl:apply-templates select="*" mode="row"/>
   </div>
 </xsl:template>
 
 <xsl:template match="group" mode="row">
-      <div class="span6">
+      <div class="col-md-6">
       <xsl:apply-templates select="*" />
       </div>
 </xsl:template>

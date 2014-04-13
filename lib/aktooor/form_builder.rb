@@ -58,7 +58,7 @@ module Aktooor
         method = name
         image_placeholder = "<img src='data:image/png;base64,#{@object.send(name)}' />"
       end
-"<div class='control-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'>
+"<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'>
 <div class='fileupload fileupload-new' data-provides='fileupload'>
   <div class='fileupload-new thumbnail' style='width: 200px; height: 150px;'>
 #{image_placeholder}
@@ -98,7 +98,7 @@ module Aktooor
 
       rel_path = fields[name]['relation'].gsub('.', '-')
       ajax_path = "/ooorest/#{rel_path}.json"
-      block = "<div class='control-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>"
+      block = "<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>"
 
 @template.content_for :js do
 "
@@ -169,7 +169,7 @@ end
       else
         rel_value = ''
       end
-      block = "<div class='control-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/></div></div>"
+      block = "<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/></div></div>"
 
 @template.content_for :js do
 "
