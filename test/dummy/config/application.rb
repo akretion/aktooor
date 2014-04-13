@@ -12,10 +12,9 @@ require 'select2-rails'
 module Dummy
   class Application < Rails::Application
 
-    ::Ooorest.ooor_credentials do
-      {ooor_user_id: 1, ooor_password: 'admin', ooor_database: 'ooor_test', url: 'http://localhost:8069/xmlrpc'}
+    ::Ooor::Rack.ooor_session_config_mapper do |env|
+      {ooor_user_id: 1, password: 'admin', database: 'ooor_test', url: 'http://localhost:8069/xmlrpc', connection_session: {lang: 'en_US'}}
     end
-
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
