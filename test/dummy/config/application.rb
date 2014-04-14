@@ -5,7 +5,6 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 require "aktooor"
 
-require 'bootstrap-sass'
 require 'cocoon'
 require 'select2-rails'
 
