@@ -6,7 +6,7 @@ source "http://rubygems.org"
 gemspec
 gem 'ooor', git: 'https://github.com/akretion/ooor.git'
 gem 'ooorest', git: 'https://github.com/akretion/ooorest.git'
-gem 'actionpack', "~> 3.2"
+gem 'actionpack', "> 4.0"
 
 # jquery-rails is used by the dummy application
 gem "jquery-rails"
@@ -21,7 +21,7 @@ gem "nokogiri"
 # To use debugger
 # gem 'debugger'
 
-group :development do
-  gem 'sass-rails', '~> 3.2'
-  gem 'bootstrap-sass', '~> 2.3.2.1'
-end
+gem 'simple_form', git: 'https://github.com/plataformatec/simple_form.git'
+
+gem 'sass-rails', '~> 4.0.0'
+gem 'bootstrap-sass'

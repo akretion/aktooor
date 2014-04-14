@@ -17,11 +17,9 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "actionpack", ">= 3.1"
-  s.add_dependency "simple_form", ">=3.0.2"
+  s.add_dependency "simple_form", ">=3.0.1"
   s.add_dependency "ooorest"
   s.add_dependency "nokogiri"
   s.add_dependency "select2-rails"
   s.add_dependency "cocoon"
-
-  s.add_development_dependency "tzinfo" # FIXME: why the hell do we need this for 3.1?
 end
