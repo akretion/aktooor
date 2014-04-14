@@ -238,9 +238,11 @@ end
       when 'html'
         text_area(name, options)
       when 'selection'
-        select(name, @template.options_for_select(fields[name]["selection"].map{|i|[i[1], i[0]]}), options)
+        selected = @object.send(name.to_sym)
+        selected_value = selected.is_a?(Ooor::Base) ? selected.id : selected
+        input name, options.merge(collection: fields[name]['selection'].map{|i|[i[1], i[0]]}, as: 'select', selected: selected_value)
       when 'statusbar'
-        select(name, @template.options_for_select(fields[name]["selection"].map{|i|[i[1], i[0]]}), options)
+        input name, options.merge(collection: fields[name]['selection'].map{|i|[i[1], i[0]]}, as: 'select')
       #simple_form from now on:
       when 'one2many'
          "TODO one2many #{name}"
