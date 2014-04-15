@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/akretion/aktooor.png?branch=master)](https://travis-ci.org/akretion/aktooor)
 [![Dependency Status](https://www.versioneye.com/ruby/aktooor/badge.png)](https://www.versioneye.com/ruby/aktooor)
 
-Aktooor: OpenERP form (via_simple_form) for your Ruby project
--------------------------------------------------------------
+Aktooor: OpenERP forms (via_simple_form) for your Ruby web app
+--------------------------------------------------------------
 
 Aktooor makes it straightforward to develop forms for OpenERP.
 You can achieve the same kinds of forms as in OpenERP itself (same complexity) but with
@@ -13,11 +13,11 @@ Ruby web project, be it Rails or any other Rack framework (Sinatra etc..)
 To do that, Aktooor extends simple_form with form builder methods that properly
 introspect OpenERP meta-data (via Ooor) to make the right default decisions.
 
-So first it's a good idea to learn [simple_form](https://github.com/plataformatec/simple_form)
+So first it's a good idea to learn [simple_form](https://github.com/plataformatec/simple_form) .
 In a word, simple_form extends Rails form_for builder to support a higher level form modeling abstractions.
 Also, simple_form integrates automatically with Twitter Bootstrap 3 and other CSS frameworks.
 
-Aktooor works on Ooor object, so you you should learn [Ooor](https://github.com/akretion/ooor) too.
+Aktooor works on Ooor objects, so you you should learn [Ooor](https://github.com/akretion/ooor) too.
 Ooor objects are proxies to your OpenERP objects that use the OpenERP JSON API just like you would talk JSON with say MongoDB.
 But with Ooor you also probably want to leave most of the business logic inside the OpenERP Python runtime and just call it
 with the JSON API through Ooor. Eventually, you can still implement some business logic in Ruby, that allows you to leave it
