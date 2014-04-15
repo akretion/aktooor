@@ -25,3 +25,8 @@ gem 'simple_form', git: 'https://github.com/plataformatec/simple_form.git'
 
 gem 'sass-rails', '~> 4.0.0'
 gem 'bootstrap-sass'
+
+
+group :development do
+  gem "better_errors"
+end
