@@ -1,6 +1,15 @@
 require 'test_helper'
 
 module Ooorest
+  module RequestHelper
+    def ooor_session_for_tests
+      Ooor.default_session 
+    end
+
+    alias_method :ooor_session, :ooor_session_for_tests
+  end
+
+
   class RestControllerTest < ActionController::TestCase
 
     test "should get index" do
