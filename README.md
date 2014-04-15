@@ -6,8 +6,8 @@ Aktooor: OpenERP form (via_simple_form) for your Ruby project
 
 Aktooor makes it straightforward to develop forms for OpenERP.
 You can achieve the same kinds of forms as in OpenERP itself (same complexity) but with
-more freedom as Rails allows you. And mostly these are form that you can embed in your
-Ruby project, be it Rails or any other Rack framework (Sinatra etc..)
+more freedom as Rails allows you. And mostly these are forms that you can embed in your
+Ruby web project, be it Rails or any other Rack framework (Sinatra etc..)
 
 
 To do that, Aktooor extends simple_form with form builder methods that properly
@@ -15,7 +15,7 @@ introspect OpenERP meta-data (via Ooor) to make the right default decisions.
 
 So first it's a good idea to learn [simple_form](https://github.com/plataformatec/simple_form)
 In a word, simple_form extends Rails form_for builder to support a higher level form modeling abstractions.
-Also, simple_form integrates automatically with Twitter Bootstrap 3 orther CSS frameworks.
+Also, simple_form integrates automatically with Twitter Bootstrap 3 and other CSS frameworks.
 
 Aktooor works on Ooor object, so you you should learn [Ooor](https://github.com/akretion/ooor) too.
 Ooor objects are proxies to your OpenERP objects that use the OpenERP JSON API just like you would talk JSON with say MongoDB.
