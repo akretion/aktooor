@@ -58,7 +58,8 @@ module Aktooor
         method = name
         image_placeholder = "<img src='data:image/png;base64,#{@object.send(name)}' />"
       end
-"<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'>
+      html = <<-EOS
+<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'>
 <div class='fileupload fileupload-new' data-provides='fileupload'>
   <div class='fileupload-new thumbnail' style='width: 200px; height: 150px;'>
 #{image_placeholder}
@@ -72,36 +73,56 @@ module Aktooor
     </span>
     <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
   </div>
-</div></div></div>".html_safe
+</div></div></div>
+      EOS
+      html.html_safe
     end
 
-    def ooor_many2one_field(name, options)
+    def ooor_many2one_field(name, options) #TODO make work if reference
       rel_name = "#{name}_id"
-      if @object.associations[name]
-        if @object.associations[name].is_a?(Array)
-          rel_id = @object.associations[name][0]
-          rel_value = @object.associations[name][1]
-        else
-          rel_id = @object.associations[name]
-          rel_klass = @object.class.const_get(@object.class.all_fields[name]['relation'])
+
+      if @object.class.polymorphic_m2o_associations.keys.index(name)
+        options[:disabled] = true # TODO edition of reference field not supported yet by Aktooor
+        if @object.associations[name]
+          rel_id = @object.associations[name].split(',')[1]
+          rel_key = @object.associations[name].split(',')[0]
+          rel_path = (rel_key).gsub('.', '-')
+          rel_klass = @object.class.const_get(rel_key)
           rel_value = rel_klass.name_get([rel_id.to_i], ooor_context)[0][1]
+        else
+          rel_value = ""
+          rel_path = ""
         end
       else
-        rel_id = @object.associations[name] || @object.send(rel_name.to_sym)
-        if rel_id
-          rel_klass = @object.class.const_get(@object.class.all_fields[name]['relation'])
-          rel_value = rel_klass.name_get([rel_id.to_i], ooor_context)[0][1]
+        if @object.associations[name]
+          if @object.associations[name].is_a?(Array)
+            rel_id = @object.associations[name][0]
+            rel_value = @object.associations[name][1]
+          else
+            rel_id = @object.associations[name]
+            rel_klass = @object.class.const_get(@object.class.all_fields[name]['relation'])
+            rel_value = rel_klass.name_get([rel_id.to_i], ooor_context)[0][1]
+          end
         else
-          rel_value = ''
+          rel_id = @object.associations[name] || @object.send(rel_name.to_sym)
+          if rel_id
+            rel_klass = @object.class.const_get(@object.class.all_fields[name]['relation'])
+            rel_value = rel_klass.name_get([rel_id.to_i], ooor_context)[0][1]
+          else
+            rel_value = ''
+          end
         end
+
+        rel_path = fields[name]['relation'].gsub('.', '-')
       end
 
-      rel_path = fields[name]['relation'].gsub('.', '-')
       ajax_path = "/ooorest/#{rel_path}.json"
-      block = "<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>"
+      block = <<-EOS
+<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>
+       EOS
 
-@template.content_for :js do
-"
+       @template.content_for :js do
+         javascript = <<-EOS
 $(document).ready(function() {
   $('##{@object_name}_#{name}').select2({
     placeholder: '#{fields[name]['string']}',
@@ -139,40 +160,41 @@ if (#{options[:disabled] == true}) {
   $('##{@object_name}_#{name}').select2('readonly', true);
 }
 });
-".html_safe
-end
+        EOS
+        javascript.html_safe
+      end
 
       return block.html_safe
     end
 
     def ooor_many2many_field(name, options)
       rel_name = "#{name}_ids"
-      val = @object.send(rel_name.to_sym)
-      val = [] if !val || val == ""
-      if val.is_a?(String)
-        val = val.split(",").map! {|i| i.to_i} #FIXME remove?
-      end
-      
-      rel_ids = val.join(',')
       rel_path = fields[name]['relation'].gsub('.', '-')
       ajax_path = "/ooorest/#{rel_path}.json" #TODO use URL generator
-      if rel_ids
-        objects = @object.send(name.to_sym)
-        if objects && !objects.is_a?(Array)
-          objects = [objects]
-        end
+      val = @object.send(rel_name.to_sym)
+      if !val || val.is_a?(String) && val.is_blank? || val.is_a?(Array) && val.empty?
+        val = []
+        rel_ids_string = ""
+        rel_value = ''
+      else
+        val = val.split(",") if val.is_a?(String)
+        rel_ids = val.map! {|i| i.to_i} #FIXME remove?
+        rel_ids = [rel_ids] if rel_ids && !rel_ids.is_a?(Array)
+        rel_ids_string = rel_ids.join(",")
+        rel_klass = @object.class.const_get(fields[name]['relation']) #@object.class.reflect_on_association(:categ_id).klass
+        objects = rel_klass.name_get(rel_ids)
         if objects
-          rel_value = objects.map {|i| i.name}.join(',')
+          rel_value = objects.map {|i| i[1]}.join(',')
         else
           rel_value = ''
         end
-      else
-        rel_value = ''
       end
-      block = "<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids}' value-name='#{rel_value}'/></div></div>"
+      block = <<-EOS
+<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids_string}' value-name='#{rel_value}'/></div></div>
+      EOS
 
-@template.content_for :js do
-"
+      @template.content_for :js do
+        javascript = <<-EOS
 $(document).ready(function() {
   $('##{@object_name}_#{name}').select2({
     placeholder: '#{fields[name]['string']}',
@@ -218,8 +240,9 @@ if (#{options[:disabled] == true}) {
   $('##{@object_name}_#{name}').select2('readonly', true);
 }
 });
-".html_safe
-end
+        EOS
+        javascript.html_safe
+      end
       return block.html_safe
     end
 
@@ -229,11 +252,14 @@ end
         ooor_image_field(name, options)
       when 'many2one'
         ooor_many2one_field(name, options)
+      when 'reference'
+        ooor_many2one_field(name, options)
       when 'many2many'
         ooor_many2many_field(name, options)
       when 'many2many_tags'
         ooor_many2many_field(name, options)
       when 'mail_followers'
+        options[:disabled] = true
         ooor_many2many_field(name, options)
       when 'html'
         text_area(name, options)
@@ -245,10 +271,11 @@ end
         input name, options.merge(collection: fields[name]['selection'].map{|i|[i[1], i[0]]}, as: 'select')
       #simple_form from now on:
       when 'one2many'
-         "TODO one2many #{name}"
+         'TODO one2many #{name}'
 #        collection(name, options)
-      when 'mail_thread'
-        "TODO mail_thread #{name}"
+      when 'mail_thread' #TODO this is only a poor demo fallback:
+        options[:disabled] = true
+        ooor_many2many_field(name, options)
       else
         input(name, options)
       end
