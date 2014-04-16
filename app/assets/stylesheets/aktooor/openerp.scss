@@ -1,18 +1,34 @@
-.openerp textarea {
-  width: 300px;
+.oe_form .row, .col-md-6, .col-md-12, .col-md-8, .form-horizontal .form-group {
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.oe_form .form-group {
+  width: 442px; //TODO fluid
+}
+
+.oe_form textarea {
+  width: 442px;
   height: 100px;
 }
 
-.openerp div.input input {
-  width: 250px; //FIXME in fact we just want to size select2 inputs like simple_form
+.oe_form div.input input {
+  width: 442px; //FIXME in fact we just want to size select2 inputs like simple_form
 }
 
-.openerp select.datetime, .openerp select.date {
-  width: 100px;
+.oe_form select.datetime {
+  width: 80px;
   display: inline;
 }
 
-.openerp .tabbable {
+.oe_form select.date {
+  width: 144px;
+  display: inline;
+}
+
+.oe_form .tabbable {
   border-bottom: 1px solid #DDD;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -20,24 +36,11 @@
   padding-bottom: 10px;
 }
 
-.openerp .oe_form_group {
+.oe_form .oe_form_group {
   display: inline-block;
 }
 
-.openerp .row {
-//  margin-left: 0px;
-  clear: both;
-}
-
-.row .col-md-6 {
-//  margin-left: 0px !important;
-}
-
-.openerp .tab-content {
-//  overflow: hidden;
-}
-
-.openerp .oe_form .required input:not([disabled]):not([readonly]), .openerp .oe_form .required select:not([disabled]):not([readonly]), .openerp .oe_form .required textarea:not([disabled]):not([readonly]) {
+.oe_form .required input:not([disabled]):not([readonly]), .openerp .oe_form .required select:not([disabled]):not([readonly]), .openerp .oe_form .required textarea:not([disabled]):not([readonly]) {
 background-color: #D2D2FF !important;
 }
 
@@ -50,6 +53,7 @@ background-color: #D2D2FF !important;
 .openerp .oe_avatar + div {
   margin-left: 5px;
 }
+
 .openerp .oe_title {
   width: 50%;
   float: left;
@@ -63,22 +67,4 @@ text-align: right;
 .openerp .oe_right {
 float: right;
 margin-left: 8px;
-}
-
-.openerp .oe_form .oe_form_field_image .oe_form_field_image_controls {
-  position: absolute;
-  top: 1px;
-  padding: 4px 0;
-  width: 100%;
-  display: none;
-  text-align: center;
-  color: #eeeeee;
-  background: rgba(37, 37, 37, 0.9);
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
-  border-radius: 3px 3px 0 0;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
 }
