@@ -17,7 +17,16 @@ module Aktooor
       options.delete('width')
       options.delete(:style).delete('width')
 
-      options[:disabled] = true if options.delete(:readonly) || fields[attribute_name]['readonly']
+      if options.delete(:readonly)
+        options[:disabled] = true
+      elsif fields[attribute_name]['readonly']
+        status = @object.attributes['state'] || 'draft'
+        if fields[attribute_name]['states'] && fields[attribute_name]['states'][status] && x=fields[attribute_name]['states'][status][0]
+          options[:disabled] = x[0] if x[0] = 'readonly'
+        else
+          options[:disabled] = fields[attribute_name]['readonly']
+        end
+      end
       options[:as] = 'hidden' if options[:invisible]
       adapt_label(attribute_name, options)
       dispatch_input(attribute_name, options)
@@ -53,18 +62,17 @@ module Aktooor
       if fields[name]['type'] == 'char' # it's just an image URL, image binary shouldn't be posted to OpenERP!
         method = "ooor_special_file_#{name}"
         url = @object.attributes[name] || @object.send(name) || "http://www.placehold.it/180x180/EFEFEF/AAAAAA&text=#{I18n.t('No+Image', :default => 'No+Image')}"
-        image_placeholder = "<img src='#{url}' />"
+        image_placeholder = "<img src='#{url}'/>"
       else
         method = name
-        image_placeholder = "<img src='data:image/png;base64,#{@object.send(name)}' />"
+        image_placeholder = "<img src='data:image/png;base64,#{@object.send(name)}'/>"
       end
       html = <<-EOS
-<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'>
+<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div>
 <div class='fileupload fileupload-new' data-provides='fileupload'>
-  <div class='fileupload-new thumbnail' style='width: 200px; height: 150px;'>
+  <div class='fileupload-new img-thumbnail'>
 #{image_placeholder}
   </div>
-  <div class='fileupload-preview fileupload-exists thumbnail' style='max-width: 200px; max-height: 150px; line-height: 20px;'></div>
   <div>
     <span class='btn btn-file'>
       <span class='fileupload-new'>Select image</span>
@@ -118,7 +126,7 @@ module Aktooor
 
       ajax_path = "/ooorest/#{rel_path}.json"
       block = <<-EOS
-<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>
+<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>
        EOS
 
        @template.content_for :js do
@@ -190,7 +198,7 @@ if (#{options[:disabled] == true}) {
         end
       end
       block = <<-EOS
-<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div class='controls'><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids_string}' value-name='#{rel_value}'/></div></div>
+<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids_string}' value-name='#{rel_value}'/></div></div>
       EOS
 
       @template.content_for :js do
@@ -271,7 +279,19 @@ if (#{options[:disabled] == true}) {
         input name, options.merge(collection: fields[name]['selection'].map{|i|[i[1], i[0]]}, as: 'select')
       #simple_form from now on:
       when 'one2many'
-         'TODO one2many #{name}'
+        html = label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])
+        html << "<div>".html_safe
+        html << (simple_fields_for name.to_sym do |item|
+          @template.render 'nested_form', :f => item
+        end)
+        html << @template.link_to_add_association(self, name.to_sym, {:partial => 'nested_form'}) do #TODO if block given use it instead
+"  <div class='clearfix'>
+    <button type='button' class='btn btn-success btn-lg'><i class='fa fa-picture-o'></i> Add <i class='icon-picture icon-white'></i></button>
+  </div>".html_safe
+        end
+        html << "</div>".html_safe
+        html.html_safe
+#         'TODO one2many #{name}'
 #        collection(name, options)
       when 'mail_thread' #TODO this is only a poor demo fallback:
         options[:disabled] = true
