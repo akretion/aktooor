@@ -11,9 +11,11 @@
     </div>
   <% end %>
 
-  <%= render :inline => oe_partial, :locals => {f: f} %>
+  <div class="actions row">
+    <%= render :inline => oe_partial, :locals => {f: f} %>
+  </div>
 
-  <div class="actions">
+  <div class="actions row">
     <%= f.button :submit, class: 'btn btn-primary btn-lg' %>
   </div>
 <% end %>
