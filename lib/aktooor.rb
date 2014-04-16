@@ -50,7 +50,8 @@ module Aktooor
       res = Ooor.cache.fetch("partial-#{@model_path}-#{@view_id || @view_type}") do
         if @view
           xslt = Nokogiri::XSLT(ooor_xslt_content(@view_type))
-          @view.gsub!("&quot;", "'").gsub!("\"", '"')
+          @view.gsub!("&quot;", "'")
+          @view.gsub!("\"", '"')
           doc = Nokogiri::XML(@view)
           if @view_type == :tree
             @field_list = []
@@ -82,6 +83,37 @@ module Aktooor
   end
 
   Ooorest::ActionWindowControllerBase.send :include, ViewAwareController
+end
+
+
+class Ooor::Base # extension borrowed from ActiveRecord http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html
+
+    # Marks this record to be destroyed as part of the parents save transaction.
+    # This does _not_ actually destroy the record instantly, rather child record will be destroyed
+    # when <tt>parent.save</tt> is called.
+    #
+    # Only useful if the <tt>:autosave</tt> option on the parent is enabled for this associated model.
+    def mark_for_destruction
+      @marked_for_destruction = true
+    end
+
+    # Returns whether or not this record will be destroyed as part of the parents save transaction.
+    #
+    # Only useful if the <tt>:autosave</tt> option on the parent is enabled for this associated model.
+    def marked_for_destruction?
+      @marked_for_destruction
+    end
+
+    # Records the association that is being destroyed and destroying this
+    # record in the process.
+    def destroyed_by_association=(reflection)
+      @destroyed_by_association = reflection
+    end
+
+    def _destroy
+      marked_for_destruction?
+    end
+
 end
 
 
