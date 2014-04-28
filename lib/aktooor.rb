@@ -18,16 +18,15 @@ module Aktooor
   module ViewAwareController
     def ooor_model_meta
       super
-      ooor_view_meta unless ([:json, :xml].index(params[:format]) || params[:view_id])
+      ooor_view_meta unless [:json, :xml].index(params[:format])
     end
 
     def ooor_view_meta
-      ooor_model
       @view_type = params["view_type"] || {index: :tree, show: :form, edit: :form, new: :form, update: :form}[params["action"].to_sym] || :tree
       if params['view_id']
         @view_id = params["view_id"]
       elsif params['view_ref']
-        @view_id = Ooor.connection(params).const_get('ir.ui.view').find(params['view_ref'], fields: ['id']).id
+        @view_id = ooor_session.const_get('ir.ui.view').find(params['view_ref'], fields: ['id']).id
       else #TODO view_name
         @view_id = false
       end
@@ -35,8 +34,9 @@ module Aktooor
         @abstract_model.rpc_execute('fields_view_get', @view_id, @view_type)#, fvg_context, false, false, {context_index: 2})
       end
       @view = fvg['arch']
-      @fields = fvg['fields']
-      @abstract_model.set_columns_hash(@fields)
+      @fields = {image_uid: {"selectable"=>true, "type"=>"char", "string"=>"Dragonfly Image uid", "size"=>128}}.merge(fvg['fields'])
+#      @fields = fvg['fields']
+      @abstract_model.columns_hash(@fields)
       ooor_partial
     end
 
@@ -58,62 +58,35 @@ module Aktooor
             doc.xpath('//field').each do |field|
               @field_list << ooor_table_field(field)
             end
+            view_name = doc.xpath('//tree')[0]['string']
+          else
+            view_name = doc.xpath('//form')[0]['string']
           end
-          ["#{xslt.transform(doc)}", @field_list]
+          ["#{xslt.transform(doc)}", @field_list, view_name]
         end
       end
       @oe_partial = res[0]
       @field_list = res[1]
+      @form_name = res[2]
     end
 
-  def ooor_table_field(field)
-    if field[:string] && field[:string] != ""
-      field_name = field[:string]
-    elsif @fields[field[:name]]
-      field_name = @fields[field[:name]]['string']
-    elsif @abstract_model.fields[field[:name]]
-      field_name = @abstract_model.fields[field[:name]]['string']
-    elsif @abstract_model.columns_hash[field[:name]]
-      field_name = @abstract_model.columns_hash[field[:name]][:name]
-    else
-      field_name = field[:name]
+    def ooor_table_field(field)
+      if field[:string] && field[:string] != ""
+        field_name = field[:string]
+      elsif @fields[field[:name]]
+        field_name = @fields[field[:name]]['string']
+      elsif @abstract_model.fields[field[:name]]
+        field_name = @abstract_model.fields[field[:name]]['string']
+      elsif @abstract_model.columns_hash[field[:name]]
+        field_name = @abstract_model.columns_hash[field[:name]][:name]
+      else
+        field_name = field[:name]
+      end
     end
-  end
 
   end
 
   Ooorest::ActionWindowControllerBase.send :include, ViewAwareController
-end
-
-
-class Ooor::Base # extension borrowed from ActiveRecord http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html
-
-    # Marks this record to be destroyed as part of the parents save transaction.
-    # This does _not_ actually destroy the record instantly, rather child record will be destroyed
-    # when <tt>parent.save</tt> is called.
-    #
-    # Only useful if the <tt>:autosave</tt> option on the parent is enabled for this associated model.
-    def mark_for_destruction
-      @marked_for_destruction = true
-    end
-
-    # Returns whether or not this record will be destroyed as part of the parents save transaction.
-    #
-    # Only useful if the <tt>:autosave</tt> option on the parent is enabled for this associated model.
-    def marked_for_destruction?
-      @marked_for_destruction
-    end
-
-    # Records the association that is being destroyed and destroying this
-    # record in the process.
-    def destroyed_by_association=(reflection)
-      @destroyed_by_association = reflection
-    end
-
-    def _destroy
-      marked_for_destruction?
-    end
-
 end
 
 
