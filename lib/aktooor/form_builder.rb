@@ -125,8 +125,11 @@ module Aktooor
       end
 
       ajax_path = "/ooorest/#{rel_path}.json"
+      opts = {label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required]}
+      opts[:label_html] = opts.except(:label, :required, :as)
+the_label = SimpleForm::Inputs::Base.new(self, name, nil, nil, opts).label
       block = <<-EOS
-<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>
+<div class='form-group input string field'/>#{the_label}<div><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>
        EOS
 
        @template.content_for :js do
@@ -186,7 +189,7 @@ if (#{options[:disabled] == true}) {
         rel_value = ''
       else
         val = val.split(",") if val.is_a?(String)
-        rel_ids = val.map! {|i| i.to_i} #FIXME remove?
+        rel_ids = val.map! {|i| i.is_a?(Ooor::Base) ? i.id : i.to_i}
         rel_ids = [rel_ids] if rel_ids && !rel_ids.is_a?(Array)
         rel_ids_string = rel_ids.join(",")
         rel_klass = @object.class.const_get(fields[name]['relation']) #@object.class.reflect_on_association(:categ_id).klass
@@ -272,8 +275,12 @@ if (#{options[:disabled] == true}) {
       when 'html'
         text_area(name, options)
       when 'selection'
-        selected = @object.send(name.to_sym)
-        selected_value = selected.is_a?(Ooor::Base) ? selected.id : selected
+        if @object.associations[name].is_a?(Array)
+          selected_value = @object.associations[name][0]
+        else
+          selected = @object.send(name.to_sym)
+          selected_value = selected.is_a?(Ooor::Base) ? selected.id : selected
+        end
         input name, options.merge(collection: fields[name]['selection'].map{|i|[i[1], i[0]]}, as: 'select', selected: selected_value)
       when 'statusbar'
         input name, options.merge(collection: fields[name]['selection'].map{|i|[i[1], i[0]]}, as: 'select')
