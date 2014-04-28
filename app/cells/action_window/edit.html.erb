@@ -1,6 +1,6 @@
 <div class='openerp openerp_webclient_container'><div class='oe_form col-md-12'>
 
-<h1>Editing <%= @abstract_model.model_name %></h1>
+<h1><%= @form_name || @abstract_model.model_name %></h1>
 
 <%= render(partial: 'action_window/form', locals: {oe_partial: @oe_partial, object: @object, model_path: @model_path}) %>
 
