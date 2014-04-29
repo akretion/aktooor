@@ -3,6 +3,7 @@ require 'simple_form/form_builder'
 
 module Aktooor
   class FormBuilder < SimpleForm::FormBuilder
+    include FormTransformer
 
     def ooor_input(attribute_name, attrs={}, &block)
       attribute_name = attribute_name.to_s
@@ -298,8 +299,6 @@ if (#{options[:disabled] == true}) {
         end
         html << "</div>".html_safe
         html.html_safe
-#         'TODO one2many #{name}'
-#        collection(name, options)
       when 'mail_thread' #TODO this is only a poor demo fallback:
         options[:disabled] = true
         ooor_many2many_field(name, options)
@@ -311,7 +310,7 @@ if (#{options[:disabled] == true}) {
     private
 
       def fields
-        @template.instance_variable_get('@fields') || @object.class.all_fields
+        fields_view_get_meta()[3]
       end
 
       def ooor_context
