@@ -307,15 +307,5 @@ if (#{options[:disabled] == true}) {
       end
     end
 
-    private
-
-      def fields
-        fields_view_get_meta()[3]
-      end
-
-      def ooor_context
-        @template.instance_variable_get('@ooor_context')
-      end
-
   end
 end

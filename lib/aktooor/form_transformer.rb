@@ -13,21 +13,28 @@ module Aktooor
 
     def fields_view_get_meta(options={})
       params = @template.params
-      model_name = @template.assigns['model_name']
-      abstract_model = @template.assigns['abstract_model']
+      abstract_model = @object.class || @template.assigns['abstract_model'] # form_for and fields_for have an @object, not a table
       view_type = options[:view_type] || params["view_type"] || {index: :tree, show: :form, edit: :form, new: :form, update: :form}[params["action"].to_sym] || :tree
       if view_ref = options[:view_ref] || params['view_ref']
         view_id = ooor_session.const_get('ir.ui.view').find(params['view_ref'], fields: ['id']).id
       else
         view_id = options[:view_id] || params["view_id"]
       end
-      fvg = Ooor.cache.fetch("fgv-#{model_name}-#{view_id || view_type}") do #TODO OE user cache wise? 
+      fvg = Ooor.cache.fetch("fgv-#{abstract_model.openerp_model}-#{view_id || view_type}") do #TODO OE user cache wise? 
         abstract_model.rpc_execute('fields_view_get', view_id, view_type)#, fvg_context, false, false, {context_index: 2})
       end
       view = fvg['arch']
-      fields = {image_uid: {"selectable"=>true, "type"=>"char", "string"=>"Dragonfly Image uid", "size"=>128}}.merge(fvg['fields'])
+      fields = abstract_model.all_fields().merge(fvg['fields'])
       abstract_model.columns_hash(fields)
       ooor_partial(view_type, view_id, view, fields)
+    end
+
+    def fields
+      fields_view_get_meta()[3]
+    end
+
+    def ooor_context
+      @template.instance_variable_get('@ooor_context')
     end
 
     def ooor_xslt_content(view_type)
