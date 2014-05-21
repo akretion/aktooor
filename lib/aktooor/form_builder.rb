@@ -74,6 +74,7 @@ module Aktooor
   <div class='fileupload-new img-thumbnail'>
 #{image_placeholder}
   </div>
+  <div class="fileupload-preview thumbnail" data-trigger="fileupload" style="width: 200px; height: 150px;"></div>
   <div>
     <span class='btn btn-file'>
       <span class='fileupload-new'>Select image</span>
