@@ -130,53 +130,12 @@ module Aktooor
       opts = {label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required]}
       opts[:label_html] = opts.except(:label, :required, :as)
 the_label = SimpleForm::Inputs::Base.new(self, name, nil, nil, opts).label
+
       block = <<-EOS
 <div class='form-group input string field'/>#{the_label}<div><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_id}' value-name='#{rel_value}'/></div></div>
        EOS
 
-       @template.content_for :js do
-         javascript = <<-EOS
-$(document).ready(function() {
-  $('##{@object_name}_#{name}').select2({
-    placeholder: '#{fields[name]['string']}',
-    width: 'element',
-    minimumInputLength: 2,
-    formatSelection: function(category) {
-      return category.name;
-    },
-    initSelection: function (element, callback) {
-      var elementText = $(element).attr('value-name');
-      callback({name: elementText});
-    },
-    formatResult: function(item) {
-      return item.name;
-    },
-    ajax: {
-      url: '#{ajax_path}',
-      quietMillis: 100,
-      data: function (name, page) {
-        return {
-          q: name, // search term
-          limit: 20,
-          fields: ['name']
-        }
-      },
-      dataType: 'json',
-      results: function(data, page) {
-        return { results: $.map( data, function(categ, i) {
-          return categ;
-        } ) }
-      }
-    }
-  });
-if (#{options[:disabled] == true}) {
-  $('##{@object_name}_#{name}').select2('readonly', true);
-}
-});
-        EOS
-        javascript.html_safe
-      end
-
+      capture_association_js(name, options)
       return block.html_safe
     end
 
@@ -202,23 +161,22 @@ if (#{options[:disabled] == true}) {
           rel_value = ''
         end
       end
+
       block = <<-EOS
 <div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div><input type='hidden' id='#{@object_name}_#{name}' name='#{@object_name}[#{name}]' value='#{rel_ids_string}' value-name='#{rel_value}'/></div></div>
       EOS
 
-      @template.content_for :js do
-        javascript = <<-EOS
-$(document).ready(function() {
-  $('##{@object_name}_#{name}').select2({
-    placeholder: '#{fields[name]['string']}',
-    width: 'element',
-    minimumInputLength: 2,
-    multiple:true,
-    maximumSelectionSize: 15,
-    formatSelection: function(category) {
-      return category.name;
-    },
-    initSelection : function (element, callback) {
+      capture_association_js(name, options)
+      return block.html_safe
+    end
+
+    def capture_association_js(name, options)
+      rel_path = fields[name]['relation'].gsub('.', '-')
+      ajax_path = "/ooorest/#{rel_path}.json"
+      if ['many2many_tags', 'many2many'].index(options[:oe_type]) #multiple
+        multiple = "true"
+        init_selection = <<-EOS
+initSelection: function (element, callback) {
         var data = [];
         var ids = $(element).attr('value').split(',')
         var c = 0;
@@ -228,6 +186,32 @@ $(document).ready(function() {
         });
         callback(data);
     },
+EOS
+        maximum_selection_size = "maximumSelectionSize: #{options[:maximum_selection_size] || 15},"
+      else
+        multiple = "false"
+        init_selection = <<-EOS
+initSelection: function (element, callback) {
+      var elementText = $(element).attr('value-name');
+      callback({name: elementText});
+    },
+EOS
+        maximum_selection_size = ""
+      end
+
+      @template.content_for :js do
+        javascript = <<-EOS
+$(document).ready(function() {
+  $('##{@object_name}_#{name}').select2({
+    placeholder: '#{fields[name]['string']}',
+    width: 'element',
+    minimumInputLength: 2,
+    multiple: #{multiple},
+    #{maximum_selection_size}
+    formatSelection: function(category) {
+      return category.name;
+    },
+    #{init_selection}
     formatResult: function(item) {
       return item.name;
     },
@@ -256,7 +240,6 @@ if (#{options[:disabled] == true}) {
         EOS
         javascript.html_safe
       end
-      return block.html_safe
     end
 
     def dispatch_input(name, options={}) #TODO other OE attrs!
