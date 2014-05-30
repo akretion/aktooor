@@ -30,6 +30,7 @@ module Aktooor
       end
       options[:as] = 'hidden' if options[:invisible]
       adapt_label(attribute_name, options)
+      capture_on_change(attribute_name, options) if options[:on_change_js]
       dispatch_input(attribute_name, options)
     end
 
@@ -170,6 +171,17 @@ the_label = SimpleForm::Inputs::Base.new(self, name, nil, nil, opts).label
       return block.html_safe
     end
 
+    def capture_on_change(name, options)
+      @template.content_for :js do
+        javascript = <<-EOS
+$('##{@object_name}_#{name}').change(function() {
+  #{options[:on_change_js]};
+});
+        EOS
+        javascript.html_safe
+      end
+    end
+
     def capture_association_js(name, options)
       rel_path = fields[name]['relation'].gsub('.', '-')
       ajax_path = "/ooorest/#{rel_path}.json"
@@ -205,7 +217,7 @@ $(document).ready(function() {
   $('##{@object_name}_#{name}').select2({
     placeholder: '#{fields[name]['string']}',
     width: 'element',
-    minimumInputLength: 2,
+    minimumInputLength: #{options[:mininum_input_length] || 2},
     multiple: #{multiple},
     #{maximum_selection_size}
     formatSelection: function(category) {
@@ -221,7 +233,8 @@ $(document).ready(function() {
         return {
           q: name, // search term
           limit: 20,
-          fields: ['name']
+          fields: ['name'],
+          domain: eval(#{options[:domain_js] || '[]'}),
         }
       },
       dataType: 'json',
