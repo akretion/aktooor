@@ -34,7 +34,9 @@ module Aktooor
     end
 
     def ooor_context
-      @template.instance_variable_get('@ooor_context')
+      ctx = @template.instance_variable_get('@ooor_context')
+      raise "no @ooor_context set from your controller. Did you call ooor_context or ooor_model_meta filter in the controller?" unless ctx
+      ctx
     end
 
     def ooor_xslt_content(view_type)
