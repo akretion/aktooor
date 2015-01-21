@@ -275,11 +275,27 @@ if (#{options[:disabled] == true}) {
       when 'selection'
         if @object.associations[name].is_a?(Array)
           selected_value = @object.associations[name][0]
+        elsif @object.associations[name]
+          selected_value = @object.associations[name]
         else
           selected = @object.send(name.to_sym)
           selected_value = selected.is_a?(Ooor::Base) ? selected.id : selected
         end
-        input name, options.merge(collection: fields[name]['selection'].map{|i|[i[1], i[0]]}, as: 'select', selected: selected_value)
+        if options[:collection]
+          collection = options[:collection]
+        elsif fields[name]['type'] == 'many2one' # it's a many2one with a selection widget
+          rel_klass = @object.class.const_get(fields[name]['relation'])
+          if options[:domain_rb]
+            collection_ids = rel_klass.search(options[:domain_rb])
+            collection = rel_klass.name_get(collection_ids).map {|i| [i[1], i[0]]}
+          else
+            collection = rel_klass.name_search("%").map {|i| [i[1], i[0]]}
+          end
+          collection = [['-', '']] + collection unless fields[name]['required']
+        else
+          collection = fields[name]['selection'].map {|i| [i[1], i[0]]}
+        end
+        input name, options.merge(collection: collection, as: 'select', selected: selected_value)
       when 'statusbar'
         input name, options.merge(collection: fields[name]['selection'].map{|i|[i[1], i[0]]}, as: 'select')
       #simple_form from now on:
