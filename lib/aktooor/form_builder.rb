@@ -69,22 +69,22 @@ module Aktooor
         method = name
         image_placeholder = "<img src='data:image/png;base64,#{@object.send(name)}'/>"
       end
+      options[:class] = 'fileinput'
       html = <<-EOS
-<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}<div>
-<div class='fileupload fileupload-new' data-provides='fileupload'>
-  <div class='fileupload-new img-thumbnail'>
-#{image_placeholder}
+<div class='form-group input string field'/>#{label(name, label: (options[:label] || options.delete('string') || fields[name]['string']), class: 'string control-label', required: options[:required])}
+
+<div class="fileinput fileinput-new" data-provides="fileinput">
+  <div class="fileinput-new thumbnail" style="width: 214px; height: 160px">
+    #{image_placeholder}
   </div>
-  <div class="fileupload-preview thumbnail" data-trigger="fileupload" style="width: 200px; height: 150px;"></div>
+  <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
   <div>
-    <span class='btn btn-file'>
-      <span class='fileupload-new'>Select image</span>
-      <span class='fileupload-exists'>Change</span>
-#{file_field(method, options)}
-    </span>
-    <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>Remove</a>
+    <span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span>#{file_field(method, options)}</span>
+    <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
   </div>
-</div></div></div>
+</div>
+
+</div>
       EOS
       html.html_safe
     end
