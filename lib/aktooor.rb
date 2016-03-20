@@ -1,7 +1,6 @@
 require 'action_view'
 require 'aktooor/engine'
 require 'ooorest'
-require 'ooorest/action_window_controller_base'
 require 'nokogiri'
 require 'aktooor/action_view_extensions/form_helper'
 require 'aktooor/form_transformer'
