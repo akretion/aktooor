@@ -1,3 +1,5 @@
+if defined?(Cell::Rails)
+
 class ActionWindowCell < Cell::Rails
 
   include Ooorest::ActionWindowController
@@ -27,5 +29,7 @@ class ActionWindowCell < Cell::Rails
   def respond_to(&block)
     render
   end
+
+end
 
 end
